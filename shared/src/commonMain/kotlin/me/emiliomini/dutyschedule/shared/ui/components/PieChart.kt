@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dutyschedule.shared.generated.resources.Res
 import dutyschedule.shared.generated.resources.components_piechart_empty
-import me.emiliomini.dutyschedule.shared.ui.icons.PieChartIcon
+import me.emiliomini.dutyschedule.shared.ui.icons.PieChart
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.round
@@ -72,7 +72,7 @@ fun <T> PieChart(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(PieChartIcon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Icon(PieChart, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.height(4.dp))
             Text(stringResource(Res.string.components_piechart_empty))
         }

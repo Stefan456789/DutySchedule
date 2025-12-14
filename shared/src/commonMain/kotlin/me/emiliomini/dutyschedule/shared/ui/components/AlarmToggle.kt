@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import me.emiliomini.dutyschedule.shared.api.getPlatformAlarmApi
 import me.emiliomini.dutyschedule.shared.services.storage.StorageService
 import me.emiliomini.dutyschedule.shared.ui.icons.AlarmAdd
-import me.emiliomini.dutyschedule.shared.ui.icons.Check
+import me.emiliomini.dutyschedule.shared.ui.icons.AlarmOn
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -62,7 +62,7 @@ fun AlarmToggle(modifier: Modifier = Modifier, dutyBegin: Instant, guid: String)
             }, enabled = !alarmBlocked
         ) {
             if (alarmSet) {
-                Icon(Check, contentDescription = "Reminder set")
+                Icon(AlarmOn, contentDescription = "Reminder set")
             } else {
                 Icon(AlarmAdd, contentDescription = "Set Reminder")
             }
