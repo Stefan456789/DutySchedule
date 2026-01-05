@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -23,8 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -44,7 +43,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dutyschedule.shared.generated.resources.Res
 import dutyschedule.shared.generated.resources.main_alarms_none
-import dutyschedule.shared.generated.resources.main_alarms_title
 import dutyschedule.shared.generated.resources.main_alarms_upcoming
 import dutyschedule.shared.generated.resources.main_settings_section_alarms
 import kotlinx.coroutines.launch
@@ -68,23 +66,19 @@ import kotlin.time.Instant
 @Composable
 fun AlarmsScreen(
     modifier: Modifier = Modifier,
-    bottomBar: @Composable (() -> Unit) = {},
+    paddingValues: PaddingValues
 ) {
     LaunchedEffect(Unit) {
         // AlarmService.clean()
     }
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val timeFormat = "HH:mm"
     val dateFormat = "dd/MM/yyyy"
     val alarmItems by StorageService.ALARM_ITEMS.collectAsState()
 
     Screen(
-        modifier = modifier,
-        title = stringResource(Res.string.main_alarms_title),
-        bottomBar = bottomBar,
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        modifier = modifier, paddingValues = paddingValues
     ) { innerPadding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding).padding(20.dp),
