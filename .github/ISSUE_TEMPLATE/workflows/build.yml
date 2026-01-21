@@ -1,26 +1,56 @@
-name: Build Flutter Apps
+name: iOS Compose Multiplatform Build
 
 on:
-  - push
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  build_ios:
+  ios-build:
     runs-on: macos-latest
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-      - uses: cedvdb/action-flutter-build-ios@v1
-        with:
-          # always use --export-options-plist=ios/GithubActionsExportOptions.plist
-          build-cmd: flutter build ipa --release --export-options-plist=iosApp/GithubActionsExportOptions.plist
-          # certificate-base64: ${{ secrets.IOS_BUILD_CERTIFICATE_BASE64 }}
-          # certificate-password: ${{ secrets.IOS_BUILD_CERTIFICATE_PASSWORD }}
-          # provisioning-profile-base64: ${{ secrets.IOS_MOBILE_PROVISIONING_PROFILE_BASE64 }}
-          # keychain-password: ${{ secrets.IOS_GITHUB_KEYCHAIN_PASSWORD }}
 
-      - name: Archive IPA
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
+      - name: Build shared KMP framework
+        run: |
+          ./gradlew :shared:assembleReleaseXCFramework
+
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Build iOS app (Simulator)
+        run: |
+          xcodebuild \
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            build
+
+      - name: Archive build logs
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: release-ipa
-          # Try running the build locally with the build command to be sure of this path
-          path: build/ios/ipa/tdot_gkr.ipa
+          name: xcode-logs
+          path: ~/Library/Logs/DiagnosticReports
