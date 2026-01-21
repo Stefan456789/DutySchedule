@@ -33,7 +33,7 @@ jobs:
 
       - name: Build shared KMP framework
         run: |
-          ./gradlew :shared:assembleReleaseXCFramework
+          ./gradlew :shared:assembleSharedReleaseXCFramework
 
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode.app
