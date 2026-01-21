@@ -32,8 +32,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build shared KMP framework
-        run: |
-          ./gradlew :shared:assembleSharedReleaseXCFramework
+        run: ./gradlew :shared:assembleSharedReleaseXCFramework
 
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode.app
@@ -43,14 +42,30 @@ jobs:
           xcodebuild \
             -project iosApp/iosApp.xcodeproj \
             -scheme iosApp \
-            -configuration Debug \
+            -configuration Release \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 15' \
-            build
+            build \
+            -derivedDataPath build/DerivedData
 
-      - name: Archive build logs
-        if: failure()
+      - name: Archive iOS app
+        run: |
+          xcodebuild archive \
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Release \
+            -archivePath $PWD/build/iosApp.xcarchive \
+            -derivedDataPath build/DerivedData
+
+      - name: Export .ipa (Ad-Hoc / Development)
+        run: |
+          mkdir -p build/ipa
+          xcodebuild -exportArchive \
+            -archivePath build/iosApp.xcarchive \
+            -exportPath build/ipa \
+
+      - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: xcode-logs
-          path: ~/Library/Logs/DiagnosticReports
+          name: ios-ipa
+          path: build/ipa/*.ipa
